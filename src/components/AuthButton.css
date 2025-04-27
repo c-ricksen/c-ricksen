@@ -1,0 +1,86 @@
+/* AuthButton.css - Styles for authentication buttons */
+
+.auth-button-container {
+  display: flex;
+  align-items: center;
+}
+
+.auth-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.auth-button:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.auth-button:active {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transform: translateY(0);
+}
+
+.auth-button-icon {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.auth-button-text {
+  white-space: nowrap;
+}
+
+/* Sign in button - Google blue */
+.sign-in-button {
+  background-color: #4285f4;
+  color: white;
+}
+
+.sign-in-button:hover {
+  background-color: #3367d6;
+}
+
+.sign-in-button:active {
+  background-color: #2a56c6;
+}
+
+/* Sign out button - Subtle design */
+.sign-out-button {
+  background-color: white;
+  color: #5f6368;
+  border: 1px solid #dadce0;
+}
+
+.sign-out-button:hover {
+  background-color: #f8f9fa;
+  color: #202124;
+}
+
+.sign-out-button:active {
+  background-color: #f1f3f4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .auth-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .auth-button-text {
+    display: none;
+  }
+  
+  .auth-button-icon {
+    margin-right: 0;
+  }
+}
