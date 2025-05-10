@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Sharing Hub</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-color: #2d3436;
+            --light-color: #f9f9f9;
+            --success-color: #6ab04c;
+            --warning-color: #f0932b;
+            --danger-color: #eb4d4b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #3db9b1;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #d44340;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+
+        .btn-warning:hover {
+            background-color: #e0882b;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #5a9e3d;
+        }
+
+        .recipe-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .recipe-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .recipe-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-content {
+            padding: 1.5rem;
+        }
+
+        .recipe-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .recipe-time {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .recipe-ingredients, .recipe-instructions {
+            margin-bottom: 1rem;
+        }
+
+        .recipe-ingredients h3, .recipe-instructions h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .recipe-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-align: center;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .recipe-list {
+                grid-template-columns: 1fr;
+            }
+
+            .recipe-form {
+                padding: 1.5rem;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .no-recipes {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .ingredient-list {
+            list-style-position: inside;
+            padding-left: 1rem;
+        }
+
+        .instruction-list {
+            list-style-type: decimal;
+            list-style-position: inside;
+            padding-left: 1rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .close-modal {
+            font-size: 1.5rem;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+        }
+
+        .close-modal:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .share-link-container {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .share-link {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 0.9rem;
+            background-color: #f8f8f8;
+        }
+
+        .copy-btn {
+            border-radius: 0 4px 4px 0;
+            padding: 0.75rem 1rem;
+        }
+
+        .share-instructions {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.error {
+            background-color: var(--danger-color);
+        }
+
+        .notification.info {
+            background-color: var(--secondary-color);
+        }
+
+        /* Imported Recipe Banner */
+        .imported-recipe-banner {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .imported-recipe-banner p {
+            margin: 0;
+        }
+
+        .imported-recipe-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .imported-recipe-actions .btn {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Recipe Sharing Hub</h1>
+            <p>Create, share, and discover delicious recipes</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Imported Recipe Banner (Hidden by default) -->
+        <div id="imported-recipe-banner" class="imported-recipe-banner hidden">
+            <p>Someone shared a recipe with you! Would you like to save it to your collection?</p>
+            <div class="imported-recipe-actions">
+                <button id="save-imported-recipe" class="btn btn-success">Save Recipe</button>
+                <button id="discard-imported-recipe" class="btn btn-danger">Discard</button>
+            </div>
+        </div>
+
+        <section id="recipe-form-section">
+            <h2 class="section-title">Create a New Recipe</h2>
+            <form id="recipe-form" class="recipe-form">
+                <input type="hidden" id="recipe-id">
+                <div class="form-group">
+                    <label for="recipe-title">Recipe Title</label>
+                    <input type="text" id="recipe-title" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="recipe-image">Image URL</label>
+                    <input type="url" id="recipe-image" class="form-control" placeholder="https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="recipe-time">Cooking Time (minutes)</label>
+                    <input type="number" id="recipe-time" class="form-control" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="recipe-ingredients">Ingredients (one per line)</label>
+                    <textarea id="recipe-ingredients" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="recipe-instructions">Instructions (one step per line)</label>
+                    <textarea id="recipe-instructions" class="form-control" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancel-edit" class="btn btn-danger hidden">Cancel</button>
+                    <button type="submit" class="btn">Save Recipe</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="recipes-section">
+            <h2 class="section-title">My Recipes</h2>
+            <div id="recipe-list" class="recipe-list">
+                <!-- Recipes will be displayed here -->
+            </div>
+            <div id="no-recipes" class="no-recipes">
+                <p>You haven't added any recipes yet. Create your first recipe above!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Share Recipe</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="share-instructions">Copy this link and share it with your friends:</p>
+                <div class="share-link-container">
+                    <input type="text" id="share-link" class="share-link" readonly>
+                    <button id="copy-link-btn" class="btn copy-btn">Copy</button>
+                </div>
+                <p class="share-instructions">When they open this link, they'll be able to view and save your recipe!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notification-message"></span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const recipeForm = document.getElementById('recipe-form');
+        const recipeIdInput = document.getElementById('recipe-id');
+        const recipeTitleInput = document.getElementById('recipe-title');
+        const recipeImageInput = document.getElementById('recipe-image');
+        const recipeTimeInput = document.getElementById('recipe-time');
+        const recipeIngredientsInput = document.getElementById('recipe-ingredients');
+        const recipeInstructionsInput = document.getElementById('recipe-instructions');
+        const recipeList = document.getElementById('recipe-list');
+        const noRecipes = document.getElementById('no-recipes');
+        const cancelEditBtn = document.getElementById('cancel-edit');
+        const shareModal = document.getElementById('share-modal');
+        const shareLink = document.getElementById('share-link');
+        const copyLinkBtn = document.getElementById('copy-link-btn');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const importedRecipeBanner = document.getElementById('imported-recipe-banner');
+        const saveImportedRecipeBtn = document.getElementById('save-imported-recipe');
+        const discardImportedRecipeBtn = document.getElementById('discard-imported-recipe');
+
+        // Recipe Class
+        class Recipe {
+            constructor(id, title, image, time, ingredients, instructions) {
+                this.id = id;
+                this.title = title;
+                this.image = image;
+                this.time = time;
+                this.ingredients = ingredients;
+                this.instructions = instructions;
+                this.createdAt = new Date().toISOString();
+            }
+        }
+
+        // Recipe Manager
+        class RecipeManager {
+            constructor() {
+                this.recipes = [];
+                this.importedRecipe = null;
+                this.loadRecipes();
+                this.checkForSharedRecipe();
+            }
+
+            loadRecipes() {
+                const storedRecipes = localStorage.getItem('recipes');
+                if (storedRecipes) {
+                    this.recipes = JSON.parse(storedRecipes);
+                    this.displayRecipes();
+                }
+            }
+
+            saveRecipes() {
+                localStorage.setItem('recipes', JSON.stringify(this.recipes));
+                this.displayRecipes();
+            }
+
+            addRecipe(recipe) {
+                this.recipes.push(recipe);
+                this.saveRecipes();
+            }
+
+            updateRecipe(updatedRecipe) {
+                const index = this.recipes.findIndex(recipe => recipe.id === updatedRecipe.id);
+                if (index !== -1) {
+                    this.recipes[index] = updatedRecipe;
+                    this.saveRecipes();
+                }
+            }
+
+            deleteRecipe(id) {
+                this.recipes = this.recipes.filter(recipe => recipe.id !== id);
+                this.saveRecipes();
+            }
+
+            getRecipe(id) {
+                return this.recipes.find(recipe => recipe.id === id);
+            }
+
+            displayRecipes() {
+                recipeList.innerHTML = '';
+                
+                if (this.recipes.length === 0) {
+                    noRecipes.classList.remove('hidden');
+                    return;
+                }
+                
+                noRecipes.classList.add('hidden');
+                
+                this.recipes.forEach(recipe => {
+                    const recipeCard = document.createElement('div');
+                    recipeCard.classList.add('recipe-card');
+                    
+                    // Format ingredients and instructions as lists
+                    const ingredientsList = recipe.ingredients
+                        .map(ingredient => `<li>${ingredient}</li>`)
+                        .join('');
+                    
+                    const instructionsList = recipe.instructions
+                        .map(instruction => `<li>${instruction}</li>`)
+                        .join('');
+                    
+                    recipeCard.innerHTML = `
+                        <img src="${recipe.image || 'https://via.placeholder.com/400x320'}" alt="${recipe.title}" class="recipe-image">
+                        <div class="recipe-content">
+                            <h2 class="recipe-title">${recipe.title}</h2>
+                            <span class="recipe-time">${recipe.time} minutes</span>
+                            
+                            <div class="recipe-ingredients">
+                                <h3>Ingredients:</h3>
+                                <ul class="ingredient-list">${ingredientsList}</ul>
+                            </div>
+                            
+                            <div class="recipe-instructions">
+                                <h3>Instructions:</h3>
+                                <ol class="instruction-list">${instructionsList}</ol>
+                            </div>
+                            
+                            <div class="recipe-actions">
+                                <button class="btn share-recipe" data-id="${recipe.id}">Share</button>
+                                <button class="btn btn-warning edit-recipe" data-id="${recipe.id}">Edit</button>
+                                <button class="btn btn-danger delete-recipe" data-id="${recipe.id}">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    recipeList.appendChild(recipeCard);
+                });
+                
+                // Add event listeners to buttons
+                document.querySelectorAll('.edit-recipe').forEach(button => {
+                    button.addEventListener('click', this.handleEditRecipe.bind(this));
+                });
+                
+                document.querySelectorAll('.delete-recipe').forEach(button => {
+                    button.addEventListener('click', this.handleDeleteRecipe.bind(this));
+                });
+
+                document.querySelectorAll('.share-recipe').forEach(button => {
+                    button.addEventListener('click', this.handleShareRecipe.bind(this));
+                });
+            }
+
+            handleEditRecipe(e) {
+                const id = e.target.dataset.id;
+                const recipe = this.getRecipe(id);
+                
+                if (recipe) {
+                    // Fill the form with recipe data
+                    recipeIdInput.value = recipe.id;
+                    recipeTitleInput.value = recipe.title;
+                    recipeImageInput.value = recipe.image || '';
+                    recipeTimeInput.value = recipe.time;
+                    recipeIngredientsInput.value = recipe.ingredients.join('\n');
+                    recipeInstructionsInput.value = recipe.instructions.join('\n');
+                    
+                    // Show cancel button and scroll to form
+                    cancelEditBtn.classList.remove('hidden');
+                    document.getElementById('recipe-form-section').scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            handleDeleteRecipe(e) {
+                if (confirm('Are you sure you want to delete this recipe?')) {
+                    const id = e.target.dataset.id;
+                    this.deleteRecipe(id);
+                }
+            }
+
+            handleShareRecipe(e) {
+                const id = e.target.dataset.id;
+                const recipe = this.getRecipe(id);
+                
+                if (recipe) {
+                    // Create a shareable link with encoded recipe data
+                    const recipeData = encodeURIComponent(JSON.stringify(recipe));
+                    const shareUrl = `${window.location.href.split('?')[0]}?recipe=${recipeData}`;
+                    
+                    // Set the share link in the modal
+                    shareLink.value = shareUrl;
+                    
+                    // Show the share modal
+                    shareModal.style.display = 'block';
+                }
+            }
+
+            checkForSharedRecipe() {
+                // Check if there's a recipe in the URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const sharedRecipeParam = urlParams.get('recipe');
+                
+                if (sharedRecipeParam) {
+                    try {
+                        // Decode the recipe data
+                        const recipeData = JSON.parse(decodeURIComponent(sharedRecipeParam));
+                        
+                        // Store the imported recipe
+                        this.importedRecipe = recipeData;
+                        
+                        // Show the imported recipe banner
+                        importedRecipeBanner.classList.remove('hidden');
+                        
+                        // Clear the URL parameters to avoid reimporting on refresh
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        
+                        // Show notification
+                        showNotification('Recipe shared with you!', 'info');
+                    } catch (error) {
+                        showNotification('Invalid recipe link', 'error');
+                    }
+                }
+            }
+
+            saveImportedRecipe() {
+                if (this.importedRecipe) {
+                    // Generate a new ID for the imported recipe
+                    this.importedRecipe.id = Date.now().toString();
+                    
+                    // Add the imported recipe to the collection
+                    this.addRecipe(this.importedRecipe);
+                    
+                    // Clear the imported recipe
+                    this.importedRecipe = null;
+                    
+                    // Hide the banner
+                    importedRecipeBanner.classList.add('hidden');
+                    
+                    // Show notification
+                    showNotification('Recipe saved to your collection!', 'success');
+                }
+            }
+
+            discardImportedRecipe() {
+                // Clear the imported recipe
+                this.importedRecipe = null;
+                
+                // Hide the banner
+                importedRecipeBanner.classList.add('hidden');
+                
+                // Show notification
+                showNotification('Recipe discarded', 'info');
+            }
+        }
+
+        // Initialize Recipe Manager
+        const recipeManager = new RecipeManager();
+
+        // Event Listeners
+        recipeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = recipeTitleInput.value.trim();
+            const image = recipeImageInput.value.trim();
+            const time = parseInt(recipeTimeInput.value);
+            const ingredients = recipeIngredientsInput.value
+                .split('\n')
+                .map(item => item.trim())
+                .filter(item => item !== '');
+            const instructions = recipeInstructionsInput.value
+                .split('\n')
+                .map(item => item.trim())
+                .filter(item => item !== '');
+            
+            if (recipeIdInput.value) {
+                // Update existing recipe
+                const updatedRecipe = new Recipe(
+                    recipeIdInput.value,
+                    title,
+                    image,
+                    time,
+                    ingredients,
+                    instructions
+                );
+                recipeManager.updateRecipe(updatedRecipe);
+                showNotification('Recipe updated successfully!', 'success');
+            } else {
+                // Add new recipe
+                const newRecipe = new Recipe(
+                    Date.now().toString(),
+                    title,
+                    image,
+                    time,
+                    ingredients,
+                    instructions
+                );
+                recipeManager.addRecipe(newRecipe);
+                showNotification('Recipe added successfully!', 'success');
+            }
+            
+            // Reset form
+            resetForm();
+        });
+
+        cancelEditBtn.addEventListener('click', resetForm);
+
+        // Close modal when clicking the close button or outside the modal
+        document.querySelector('.close-modal').addEventListener('click', () => {
+            shareModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === shareModal) {
+                shareModal.style.display = 'none';
+            }
+        });
+
+        // Copy share link to clipboard
+        copyLinkBtn.addEventListener('click', () => {
+            shareLink.select();
+            document.execCommand('copy');
+            showNotification('Link copied to clipboard!', 'success');
+        });
+
+        // Imported recipe actions
+        saveImportedRecipeBtn.addEventListener('click', () => {
+            recipeManager.saveImportedRecipe();
+        });
+
+        discardImportedRecipeBtn.addEventListener('click', () => {
+            recipeManager.discardImportedRecipe();
+        });
+
+        function resetForm() {
+            recipeForm.reset();
+            recipeIdInput.value = '';
+            cancelEditBtn.classList.add('hidden');
+        }
+
+        function showNotification(message, type = 'success') {
+            notificationMessage.textContent = message;
+            notification.className = 'notification';
+            notification.classList.add(type);
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
